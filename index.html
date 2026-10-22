@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b110e">
+<title>CropCare AI</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b110e'/%3E%3Cpath d='M32 52V30M32 30c0-10 7-16 17-16 0 10-7 16-17 16zM32 38c0-8-6-13-15-13 0 8 6 13 15 13z' fill='none' stroke='%2356d58a' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 64 64" class="logo" aria-hidden="true"><path d="M32 52V30M32 30c0-10 7-16 17-16 0 10-7 16-17 16zM32 38c0-8-6-13-15-13 0 8 6 13 15 13z" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>CropCare AI</span>
+    </div>
+    <button class="btn-new" id="newChat">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      <span data-i18n="newChat">New chat</span>
+    </button>
+    <nav class="nav">
+      <button class="nav-item active" data-view="chat"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span data-i18n="chat">Assistant</span></button>
+      <button class="nav-item" data-view="history"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 8v4l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="history">My cases</span></button>
+      <button class="nav-item" data-view="dashboard"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="dashboard">Dashboard</span></button>
+    </nav>
+    <div class="side-bottom">
+      <label class="field-label" for="lang" data-i18n="language">Language</label>
+      <select id="lang">
+        <option value="en">English</option>
+        <option value="am">አማርኛ</option>
+        <option value="om">Afaan Oromoo</option>
+        <option value="ti">ትግርኛ</option>
+        <option value="so">Soomaali</option>
+      </select>
+      <span class="field-label" data-i18n="answers">Answers</span>
+      <div class="seg" id="modeSeg">
+        <button data-mode="text" class="on" data-i18n="written">Written</button>
+        <button data-mode="voice" data-i18n="spoken">Spoken</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <h1 id="viewTitle">CropCare AI</h1>
+      <button class="chip-btn" id="farmToggle" aria-expanded="false">
+        <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-6 7 6v11M10 21v-6h4v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="farm">Farm details</span>
+      </button>
+    </header>
+
+    <section class="farm" id="farmPanel" hidden>
+      <div class="farm-grid">
+        <label><span data-i18n="crop">Crop</span>
+          <input id="fCrop" list="cropList" autocomplete="off" placeholder="Tomato, teff, maize…">
+        </label>
+        <label><span data-i18n="part">Plant part</span><select id="fPart"></select></label>
+        <label><span data-i18n="stage">Growth stage</span><select id="fStage"></select></label>
+        <label><span data-i18n="region">Region or town</span>
+          <input id="fRegion" autocomplete="off" placeholder="Injibara, Amhara">
+        </label>
+      </div>
+      <div class="farm-foot">
+        <button class="chip-btn" id="locBtn"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span data-i18n="location">Use my location</span></button>
+        <div class="weather" id="weatherBox"></div>
+      </div>
+      <datalist id="cropList">
+        <option value="Teff"><option value="Maize"><option value="Wheat"><option value="Barley"><option value="Sorghum">
+        <option value="Tomato"><option value="Potato"><option value="Onion"><option value="Pepper"><option value="Cabbage">
+        <option value="Coffee"><option value="Enset"><option value="Faba bean"><option value="Common bean"><option value="Banana">
+        <option value="Mango"><option value="Avocado"><option value="Rice"><option value="Cassava"><option value="Sesame">
+      </datalist>
+    </section>
+
+    <section class="view active" id="view-chat">
+      <div class="thread" id="thread">
+        <div class="welcome" id="welcome">
+          <svg viewBox="0 0 64 64" class="logo big" aria-hidden="true"><path d="M32 52V30M32 30c0-10 7-16 17-16 0 10-7 16-17 16zM32 38c0-8-6-13-15-13 0 8 6 13 15 13z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h2 data-i18n="welcome">How can I help your crop today?</h2>
+          <p data-i18n="welcomeSub">Take a photo of the sick plant or ask a question by typing or speaking.</p>
+          <div class="suggest">
+            <button data-i18n="sug1" data-sug="sug1"></button>
+            <button data-i18n="sug2" data-sug="sug2"></button>
+            <button data-i18n="sug3" data-sug="sug3"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-history"><div class="page" id="historyBox"></div></section>
+    <section class="view" id="view-dashboard"><div class="page" id="dashBox"></div></section>
+
+    <footer class="composer" id="composer">
+      <div class="status" id="status" hidden></div>
+      <div class="attach" id="attach"></div>
+      <div class="box">
+        <button class="icon-btn" id="camBtn" data-i18n-title="camera" title="Take photo" aria-label="Take photo"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+        <button class="icon-btn" id="upBtn" data-i18n-title="upload" title="Upload photo" aria-label="Upload photo"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <textarea id="input" rows="1" data-i18n-ph="ph" placeholder="Ask about your crop, or add a photo…"></textarea>
+        <button class="icon-btn" id="micBtn" data-i18n-title="mic" title="Speak" aria-label="Speak"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zM5 11a7 7 0 0 0 14 0M12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        <button class="send" id="sendBtn" data-i18n-title="send" title="Send" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" multiple hidden>
+      <input type="file" id="camInput" accept="image/*" capture="environment" hidden>
+    </footer>
+  </main>
+</div>
+
+<div class="modal" id="camModal" hidden>
+  <div class="modal-card cam">
+    <video id="camVideo" autoplay playsinline muted></video>
+    <div class="modal-actions">
+      <button class="btn ghost" id="camCancel" data-i18n="cancel">Cancel</button>
+      <button class="btn primary" id="camShot" data-i18n="capture">Capture</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="detailModal" hidden>
+  <div class="modal-card detail">
+    <button class="icon-btn close" id="detailClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script src="/script.js"></script>
+</body>
+</html>
